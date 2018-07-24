@@ -1,0 +1,168 @@
+- hosts: localhost
+  vars:
+      fedora_version: 28
+      mosek_version: 8.1.0.56
+  tasks:
+      #Configure dnf 
+      - name: Enable fastestmirror
+        become: yes
+        lineinfile:
+            path: /etc/dnf/dnf.conf
+            regexp: '^fastestmirror='
+            line: 'fastestmirror=True'
+      - name: Enable RPMFusion free
+        become: yes
+        dnf:
+            name: "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ fedora_version }}.noarch.rpm"
+            state: present
+      - name: Enable RPMFusion nonfree
+        become: yes
+        dnf:
+            name: "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ fedora_version }}.noarch.rpm"
+            state: present
+      #Set SELinux to be permissive
+      - name: Permissive SELinux
+        become: yes
+        lineinfile:
+            path: /etc/selinux/config
+            regexp: '^SELINUX='
+            line: 'SELINUX=permissive'
+
+      #Install common software using package module 
+      - name: Install MEGAsync
+        become: yes
+        dnf:
+            name: "https://mega.nz/linux/MEGAsync/Fedora_{{ fedora_version }}/x86_64/megasync-Fedora_{{ fedora_version }}.x86_64.rpm"
+            state: present
+      - name: Install VIM
+        become: yes
+        package:
+            name: vim-enhanced
+            state: latest
+      - name: Install GVIM
+        become: yes
+        package:
+            name: vim-X11
+            state: latest
+      - name: Set up Vundle
+        git:
+            repo: 'https://github.com/VundleVim/Vundle.vim.git'
+            dest: ~/.vim/bundle/Vundle.vim
+      - name: Install Chromium
+        become: yes
+        package:
+            name: chromium
+            state: latest
+      - name: Remove rhythmbox
+        become: yes
+        package:
+            name: rhythmbox
+            state: absent
+      - name: Install Audacious
+        become: yes
+        package:
+            name: audacious
+            state: latest
+      - name: Install unrar
+        become: yes
+        package:
+            name: unrar
+            state: latest
+      - name: Install p7zip
+        become: yes
+        package:
+            name: p7zip
+            state: latest
+      - name: Install i3
+        become: yes
+        package:
+            name:
+                - i3
+                - i3status
+                - i3lock
+                - dmenu
+                - feh
+                - conky
+                - xbacklight
+            state: latest
+      - name: Install Jupyter
+        become: yes
+        package:
+            name: python3-jupyter-core
+            state: latest
+#     - name: Install Jupyter
+#       pip:
+#           executable: pip3
+#           name: jupyter
+#           extra_args: --user
+      - name: Install Python 3 kernel for Jupyter
+        pip:
+            executable: pip3
+            name: ipykernel
+            extra_args: --user
+            state: latest
+      - name: Install Jupyter Lab
+        pip:
+            executable: pip3
+            name: jupyterlab
+            extra_args: --user
+            state: latest
+      - name: Set Up Mosek
+        unarchive:
+            src: https://download.mosek.com/stable/{{ mosek_version }}/mosektoolslinux64x86.tar.bz2
+            dest: ~/
+            remote_src: yes
+      - name: Copy Mosek License
+        copy:
+            src: ./config_files/mosek.lic
+            dest: ~/mosek
+      - name: Install Julia
+        become: yes
+        package:
+            name: julia
+            state: latest
+      - name: Update Julia METADATA
+        command: julia -e 'Pkg.update()'
+      - name: Install Julia kernel for Jupyter
+        command: julia -e 'Pkg.add("IJulia")'
+      - name: Install Julia JuMP
+        command: julia -e 'Pkg.add("JuMP")'
+      - name: Install Julia interface of Mosek
+        command: julia -e 'Pkg.add("Mosek")'
+      - name: Install Julia PolyJuMP
+        command: julia -e 'Pkg.add("PolyJuMP")'
+      - name: Install Julia SumOfSquares
+        command: julia -e 'Pkg.add("SumOfSquares")'
+      - name: Install TeXLive
+        become: yes
+        package:
+            name: texlive-scheme-full
+            state: latest
+      - name: Install Latexmk
+        become: yes
+        package:
+            name: latexmk
+            state: latest
+      #copy configuration files for software
+      - name: Copy vimrc
+        copy:
+            src: ./config_files/vimrc
+            dest: ~/.vimrc
+      - name: Ensure directories exists(i3)
+        file:
+            path: ~/.config/i3
+            state: directory
+      - name: Copy config of i3
+        copy:
+            src: ./config_files/i3_config
+            dest: ~/.config/i3/config
+      - name: Ensure directories exists(Jupyter)
+        file:
+            path: ~/.jupyter
+            state: directory
+      - name: Copy config of Jupyter
+        copy:
+            src: ./config_files/jupyter_config.py
+            dest: ~/.jupyter/jupyter_notebook_config.py
+      - name: Install VIM plugins
+        command: vim +PluginInstall +qall

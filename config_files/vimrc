@@ -1,0 +1,30 @@
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'tpope/vim-fugitive'
+Plugin 'godlygeek/tabular'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'Valloric/YouCompleteMe'
+
+call vundle#end()
+filetype plugin indent on
+
+syntax enable
+set background=dark
+colorscheme solarized
+
+
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set tabstop=8
+
+set spell
+
+map <Leader> <Plug>(easymotion-prefix)
