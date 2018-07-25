@@ -42,9 +42,12 @@ bindsym $mod+d exec dmenu_run
 # installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
-#Set up feh for wallpaper and conky for system information
+#Set up feh for wallpaper
 exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.png
-exec --no-startup-id conky -c ~/.conkyrc
+#Set up conky for system information
+#exec --no-startup-id conky -c ~/.conkyrc
+#Autostart megasync
+exec --no-startup-id megasync
 
 #Use ibus to input Chinese and Japanese
 exec --no-startup-id export GTK_IM_MODULE=ibus

@@ -82,7 +82,7 @@
                 - i3lock
                 - dmenu
                 - feh
-                - conky
+                  #                - conky
                 - xbacklight
             state: latest
       - name: Install Jupyter
