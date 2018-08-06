@@ -27,6 +27,22 @@
             path: /etc/selinux/config
             regexp: '^SELINUX='
             line: 'SELINUX=permissive'
+      #Development tools
+      - name: Development tools and CMake
+        become: yes
+        package:
+            name:
+                - automake
+                - gcc
+                - gcc-c++
+                - kernel-devel
+                - cmake
+      - name: Python headers
+        become: yes
+        package:
+            name:
+                - python-devel
+                - python3-devel
 
       #Install common software using package module 
       - name: Install MEGAsync
@@ -166,3 +182,5 @@
             dest: ~/.jupyter/jupyter_notebook_config.py
       - name: Install VIM plugins
         command: vim +PluginInstall +qall
+      - name: Install YouCompleteMe
+        command: ~/.vim/bundle/YouCompleteMe/install.py

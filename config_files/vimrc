@@ -11,6 +11,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'godlygeek/tabular'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'lervag/vimtex'
 
 call vundle#end()
 filetype plugin indent on
